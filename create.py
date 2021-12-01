@@ -737,7 +737,7 @@ while True:
                                         
                                         # Structures
                                         structures = {}
-                                        print(f"{prefix()}{str(i)}.5 Choose structures to generate. Leave empty for no structures.\n{Iindent()}  Please note that structures may not generate in some biomes.\n{Iindent()}  For a list of structures, see https://minecraft.fandom.com/wiki/Custom#Structure_defaults")
+                                        print(f"{prefix()}{str(i)}.5 Choose structures to generate. Seperate with comma. Leave empty for no structures.\n{Iindent()}  Please note that structures may not generate in some biomes.\n{Iindent()}  For a list of structures, see https://minecraft.fandom.com/wiki/Custom#Structure_defaults")
                                         completeWithComma(generator_structures.keys())
                                         while True:
                                             answer = input("> ").lower()
@@ -771,7 +771,7 @@ while True:
                                         generator_settings["structures"] = structures
                                         
                                         # Layers
-                                        print(f"{prefix()}{str(i)}.7 Specify the layers using the following format: \"<block> [height]\".\n{Iindent()}  If no height is given, the layer will be 1 block high.\n{Iindent()}  If you are finished, write nothing to proceed.")
+                                        print(f"{prefix()}{str(i)}.7 Specify the layers using the following format: \"<block> [height]\". For example: \"bedrock\" or \"stone 59\".\n{Iindent()}  If no height is given, the layer will be 1 block high.\n{Iindent()}  If you are finished, write nothing to proceed.")
                                         layers = []
                                         while True:
                                             answer = input(f"{str(len(layers) + 1)}. Layer > ")
