@@ -850,7 +850,7 @@ while True:
                     print(f"{Iindent()}Please state a number.")
                     
             # Simulation distance
-            if paper_version_parsed >= version.parse("1.18")
+            if paper_version_parsed >= version.parse("1.18"):
                 i += 1
                 print(f"{prefix()}{str(i)} Choose a simulation distance. (5-32)\n{Iindent()}Defaults to 10.")
                 while True:
