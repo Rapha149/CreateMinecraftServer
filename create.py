@@ -866,6 +866,8 @@ while True:
                             print(f"{Iindent()}Please choose a value between 5 and 32.")
                     except ValueError:
                         print(f"{Iindent()}Please state a number.")
+            else:
+                simulation_distance = None
                     
             # Entity broadcast range percentage
             if paper_version_parsed >= version.parse("1.16"):
