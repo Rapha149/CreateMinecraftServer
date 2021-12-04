@@ -4,6 +4,7 @@ A python / bash script to create a Minecraft Paper server quickly with many opti
 ## Requirements
 - Bash
 - Python 3
+
 For clarification: you do not have to do anything with the file `requirements.txt`. It's only needed for the bash script.
 
 ## Executing
