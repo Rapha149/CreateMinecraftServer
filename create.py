@@ -914,7 +914,7 @@ while True:
             else:
                 gamemodes = ["0", "1", "2", "3"]
                 default = "0"
-            print(f"{prefix()}{str(i)} Choose a default gamemode ({'/'.join(gamemodes)})\n{Iindent()}Defaults to \"{default}\".")
+            print(f"{prefix()}{str(i)} Choose a default gamemode. ({'/'.join(gamemodes)})\n{Iindent()}Defaults to \"{default}\".")
             complete(gamemodes)
             while True:
                 gamemode = input("> ").lower()
@@ -998,6 +998,26 @@ while True:
                 online_mode = parse_yes_no(input("> "), True, iindent())
                 if online_mode is not None:
                     break
+            
+            # Connection throttle
+            i += 1
+            print(f"{prefix()}{str(i)} Choose a connection throttle time. (int / milliseconds)\n{Iindent()}Defaults to 4000.")
+            print(f"{Iindent()}The connection throttle time is the delay before a client is allowed to connect again after a recent connection attempt.")
+            print(f"{Iindent()}A value of 0 disables the connection throttle but leaves your server susceptible to attacks (only recommended for test servers).")
+            while True:
+                answer = input("> ")
+                if not answer:
+                    connection_throttle = None
+                    break
+                try:
+                    connection_throttle = int(answer)
+                    if connection_throttle >= 0:
+                        break
+                    else:
+                        print(f"{Iindent()}Please state a positive number.")
+                except ValueError:
+                    print(f"{Iindent()}Please state a number.")
+            
                 
             # Allow flight
             i += 1
@@ -1167,9 +1187,9 @@ while True:
 
 print("\nInstalling...")
 startOnce = len(gamerules) > 0
-bukkit_data = {}
-spigot_data = {}
-paper_data = {}
+bukkit_data = { "settings": {}}
+spigot_data = { "settings": {}}
+paper_data = { "world-settings": { "default": { "game-mechanics": {}}}, "settings" : { "unsupported-settings": {}}}
 
 # Target folder
 target_folder_path = Path(target_folder)
@@ -1199,8 +1219,6 @@ print("Creating start scripts...")
 start_file = open("start.sh", "w")
 if screen:
     if restart:
-        if "settings" not in spigot_data:
-            spigot_data["settings"] = {}
         spigot_data["settings"]["restart-script"] = "./restart.sh"
         spigot_data["settings"]["restart-on-crash"] = False if startOnce else restart_on_crash
         
@@ -1276,40 +1294,27 @@ if specific_settings:
     if allow_nether is not None:
         server_properties.write("\nallow-nether=" + str(allow_nether).lower())
     
+    if connection_throttle is not None:
+        bukkit_data["settings"]["connection-throttle"] = connection_throttle
     if allow_end is not None:
-        if "settings" not in bukkit_data:
-            bukkit_data["settings"] = {}
         bukkit_data["settings"]["allow-end"] = allow_end
     
     if bungeecord is not None:
-        if "settings" not in spigot_data:
-            spigot_data["settings"] = {}
         spigot_data["settings"]["bungeecord"] = bungeecord
 
 if change_patches:
-    if "world-settings" not in paper_data:
-        paper_data["world-settings"] = { "default": { "game-mechanics": {}}}
-    elif "default" not in paper_data["world-settings"]:
-        paper_data["world-settings"]["default"] = { "game-mechanics": {}}
-    elif "game-mechanics" not in paper_data["world-settings"]["default"]:
-        paper_data["world-settings"]["default"]["game-mechanics"] = {}
     paper_data["world-settings"]["default"]["game-mechanics"]["fix-curing-zombie-villager-discount-exploit"] = patch_discount_exploit
-    
-    if "settings" not in paper_data:
-        paper_data["settings"] = { "unsupported-settings": {}}
-    elif "unsupported-settings" not in paper_data["settings"]:
-        paper_data["settings"]["unsupported_settings"] = {}
     paper_data["settings"]["unsupported-settings"]["allow-permanent-block-break-exploits"] = patch_permanent_block_break_exploit
     paper_data["settings"]["unsupported-settings"]["allow-piston-duplication"] = patch_piston_duplication
     
 server_properties.write("\n")
 server_properties.close()
 with open("bukkit.yml", "w") as bukkit_file:
-    yaml.dump(bukkit_data, bukkit_file)
+    yaml.dump(bukkit_data, bukkit_file, default_flow_style=False)
 with open("spigot.yml", "w") as spigot_file:
-    yaml.dump(spigot_data, spigot_file)
+    yaml.dump(spigot_data, spigot_file, default_flow_style=False)
 with open("paper.yml", "w") as paper_file:
-    yaml.dump(paper_data, paper_file)
+    yaml.dump(paper_data, paper_file, default_flow_style=False)
 
 # whitelist and operators
 if whitelist:
