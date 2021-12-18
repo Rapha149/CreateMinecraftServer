@@ -425,8 +425,17 @@ if which("screen") is not None:
                     if screen_log is not None:
                         break
                 
+                # Automatically resumed
+                print(f"{prefix()}3 Do you want to automatically resume the screen if it already exists? (Y/n)")
+                print(f"{Indent(1)}Explanation: if your server is already running and you try to start it again,\n{Indent(1 + len('Explanation: '))}it won't start another instance of the server but it will resume the running screen.")
+                print(f"{Indent(1)}Warning: Disabling this is not recommended and will cause issues especially if you want to use the restart system.")
+                while True:
+                    automatically_resume = parse_yes_no(input("> "), True, indent() + 1)
+                    if automatically_resume is not None:
+                        break
+                
                 # Restart
-                print(f"{prefix()}3 Do you want to enable the Spigot restart system? (y/N)\n{Indent(1)}This does not automatically restart the server.\n{Indent(1)}Warning: Unique screen names are required.")
+                print(f"{prefix()}4 Do you want to enable the Spigot restart system? (y/N)\n{Indent(1)}This does not automatically restart the server.\n{Indent(1)}Warning: Unique screen names are required.")
                 while True:
                     restart = parse_yes_no(input("> "), False, indent() + 1)
                     if restart is not None:
@@ -434,7 +443,7 @@ if which("screen") is not None:
 
                 # Restart on crash
                 if restart:
-                    print(f"{prefix()}4 Do you want the server to restart after a crash? (Y/n)")
+                    print(f"{prefix()}5 Do you want the server to restart after a crash? (Y/n)")
                     while True:
                         restart_on_crash = parse_yes_no(input("> "), True, indent() + 1)
                         if restart_on_crash is not None:
@@ -1222,7 +1231,10 @@ if screen:
         spigot_data["settings"]["restart-script"] = "./restart.sh"
         spigot_data["settings"]["restart-on-crash"] = False if startOnce else restart_on_crash
         
-        start_file.write(f"#!/bin/bash\n./restart.sh\nscreen -r {screen_name}\n")
+        if automatically_resume:
+            start_file.write(f"#!/bin/bash\nif screen -rx {screen_name} | grep -q \"There is no screen to be attached matching \"\nthen\n    ./restart.sh\n    screen -r {screen_name}\nfi\n")
+        else:
+            start_file.write(f"#!/bin/bash\n./restart.sh\nscreen -r {screen_name}\n")
         
         restart_file = open("restart.sh", "w")
         restart_file.write("#!/bin/bash\nscreen {log}-dmS {name} {java}{xms}{xmx} -jar Paper.jar nogui\n".format(log = "-L " if screen_log else "",
@@ -1232,6 +1244,13 @@ if screen:
             xmx = " -Xmx" + maximum_ram if maximum_ram is not None else ""))
         restart_file.close()
         os.chmod("restart.sh", 0o775)
+    elif automatically_resume:
+        start_file.write("#!/bin/bash\nif screen -rx {screen_name} | grep -q \"There is no screen to be attached matching \"\nthen\n    screen {log}-S {name} {java}{xms}{xmx} -jar Paper.jar nogui\nfi\n".format(screen_name = screen_name,
+            log = "-L " if screen_log else "",
+            name = screen_name,
+            java=java,
+            xms = " -Xms" + minimum_ram if minimum_ram is not None else "",
+            xmx = " -Xmx" + maximum_ram if maximum_ram is not None else ""))
     else:
         start_file.write("#!/bin/bash\nscreen {log}-S {name} {java}{xms}{xmx} -jar Paper.jar nogui\n".format(log = "-L " if screen_log else "",
             name = screen_name,
