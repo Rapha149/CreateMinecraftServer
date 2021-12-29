@@ -208,6 +208,7 @@ plugin_offers = {
     "Multiverse-Core": { "id": 390 },
     "PlugManX": { "id": 88135 },
     "SkinsRestorer": { "id": 2124 },
+    "PlaceholderAPI": { "id": 6245 },
     "ViaVersion": { "id": 19254 },
     "ViaBackwards": { "id": 27448, "depends": ["ViaVersion"] },
     "WorldEdit": { "url": "https://dev.bukkit.org/projects/worldedit/files/latest", "incompatible": ["Fast Async WorldEdit"] },
