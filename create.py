@@ -1233,12 +1233,12 @@ if screen:
         spigot_data["settings"]["restart-on-crash"] = False if startOnce else restart_on_crash
         
         if automatically_resume:
-            start_file.write(f"#!/bin/bash\nif screen -rx {screen_name} | grep -q \"There is no screen to be attached matching \"\nthen\n    ./restart.sh\n    screen -r {screen_name}\nfi\n")
+            start_file.write(f"#!/bin/bash\nif screen -rx {screen_name} | grep -q \"There is no screen to be attached matching \"\nthen\n    ./restart.sh attached\n    screen -r {screen_name}\nfi\n")
         else:
-            start_file.write(f"#!/bin/bash\n./restart.sh\nscreen -r {screen_name}\n")
+            start_file.write(f"#!/bin/bash\n./restart.sh attached\n")
         
         restart_file = open("restart.sh", "w")
-        restart_file.write("#!/bin/bash\nscreen {log}-dmS {name} {java}{xms}{xmx} -jar Paper.jar nogui\n".format(log = "-L " if screen_log else "",
+        restart_file.write("#!/bin/bash\nif [[ \"$1\" == \"attached\" ]]\nthen\n    screen {log}-S {name} {java}{xms}{xmx} -jar Paper.jar nogui\nelse\n    nohup screen {log}-dmS {name} {java}{xms}{xmx} -jar Paper.jar nogui >/dev/null 2>&1 &\nfi\n".format(log = "-L " if screen_log else "",
             name = screen_name,
             java=java,
             xms = " -Xms" + minimum_ram if minimum_ram is not None else "",
@@ -1382,7 +1382,6 @@ if len(gamerules) > 0:
                 nbtfile.write_file(level_file)
         else:
             print(f"Starting server failed. Gamerules will not be set. Check {log} for errors.")
-    
 
 # Plugins
 if certain_plugins:
