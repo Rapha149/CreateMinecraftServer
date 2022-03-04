@@ -1,12 +1,17 @@
 # CreateMinecraftServer
+
+[![PyPi Version](https://img.shields.io/pypi/v/createminecraftserver.svg?style=flat-square)](https://pypi.org/project/createminecraftserver/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/createminecraftserver.svg?style=flat-square)](https://pypi.org/project/createminecraftserver/)
+[![GitHub stars](https://img.shields.io/github/stars/Rapha149/CreateMinecraftServer.svg?style=flat-square&logo=github&label=Stars&logoColor=white)](https://github.com/Rapha149/CreateMinecraftServer/)
+
 A python / bash script to create a Minecraft Paper server quickly with many options.
 
 ## Requirements
 - Bash
 - Python 3
 
-For clarification: you do not have to do anything with the file `requirements.txt`. It's only needed for the bash script.
+## Installation
+`pip install createminecraftserver`
 
 ## Executing
-You can either execute the python script (`create.py`) directly using `python3 create.py` or execute the bash script (`create.sh`).
-Executing the bash script has the advantages that you will always have the newest version of the script and it will automatically install all the modules needed that are not installed by default.
+You just have to execute the command `cms`.

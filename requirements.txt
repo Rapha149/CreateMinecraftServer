@@ -1,5 +1,0 @@
-pathlib pathlib
-yaml pyyaml
-urllib urllib3
-packaging packaging
-nbt nbt
