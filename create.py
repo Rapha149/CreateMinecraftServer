@@ -1233,7 +1233,7 @@ if screen:
         spigot_data["settings"]["restart-on-crash"] = False if startOnce else restart_on_crash
         
         if automatically_resume:
-            start_file.write(f"#!/bin/bash\nif screen -rx {screen_name} | grep -q \"There is no screen to be attached matching \"\nthen\n    ./restart.sh attached\n    screen -r {screen_name}\nfi\n")
+            start_file.write(f"#!/bin/bash\nif screen -ls | egrep -qw \"{screen_name}\"\nthen\n    screen -rx \"{screen_name}\"\nelse\n    ./restart.sh attached\nfi\n")
         else:
             start_file.write(f"#!/bin/bash\n./restart.sh attached\n")
         
@@ -1246,7 +1246,7 @@ if screen:
         restart_file.close()
         os.chmod("restart.sh", 0o775)
     elif automatically_resume:
-        start_file.write("#!/bin/bash\nif screen -rx {screen_name} | grep -q \"There is no screen to be attached matching \"\nthen\n    screen {log}-S {name} {java}{xms}{xmx} -jar Paper.jar nogui\nfi\n".format(screen_name = screen_name,
+        start_file.write("#!/bin/bash\nif screen -ls | egrep -qw \"{name}\"\nthen\n    screen -rx \"{name}\"\nelse\n    screen {log}-S {name} {java}{xms}{xmx} -jar Paper.jar nogui\nfi\n".format(screen_name = screen_name,
             log = "-L " if screen_log else "",
             name = screen_name,
             java=java,
